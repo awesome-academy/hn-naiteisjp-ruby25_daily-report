@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   scope "(:locale)", locale: /en|vi/ do
     root "static_pages#home"
     get "/help", to: "static_pages#help"
@@ -13,6 +14,7 @@ Rails.application.routes.draw do
     namespace :manager do
       resources :departments, only: %i(index show)
       resources :users, only: %i(new create index show destroy)
+      resources :daily_reports, only: %i(edit index update)
     end
     namespace :user do
       resources :daily_reports

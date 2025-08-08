@@ -1,0 +1,40 @@
+<div class="card mb-4">
+  <div class="card-header bg-primary text-white">
+    <i class="fas fa-user"></i> <%= t("daily_report.show.report_info") %>
+  </div>
+  <div class="card-body">
+    <dl class="row mb-0">
+      <dt class="col-sm-3"><%= t("daily_report.show.staff_name") %></dt>
+      <dd class="col-sm-9"><%= @daily_report.owner&.name || "N/A" %></dd>
+
+      <dt class="col-sm-3"><%= t("daily_report.show.department") %></dt>
+      <dd class="col-sm-9"><%= @daily_report.owner&.department_name || "N/A" %></dd>
+
+      <dt class="col-sm-3"><%= t("daily_report.show.manager_name") %></dt>
+      <dd class="col-sm-9"><%= current_user.manager_name || "N/A" %></dd>
+
+      <dt class="col-sm-3"><%= t("daily_report.show.date") %></dt>
+      <dd class="col-sm-9"><%= @daily_report.report_date.strftime("%Y-%m-%d") %></dd>
+    </dl>
+  </div>
+</div>
+
+<%= render partial: "shared/section", locals: {
+      title: t("daily_report.show.planned_tasks"),
+      content: @daily_report.planned_tasks
+    } %>
+
+<%= render partial: "shared/section", locals: {
+      title: t("daily_report.show.actual_tasks"),
+      content: truncate(@daily_report.actual_tasks, length: 20)
+    } %>
+
+<%= render partial: "shared/section", locals: {
+      title: t("daily_report.show.incomplete_reason"),
+      content: @daily_report.incomplete_reason
+    } %>
+
+<%= render partial: "shared/section", locals: {
+      title: t("daily_report.show.next_day_tasks"),
+      content: @daily_report.next_day_planned_tasks
+    } %>

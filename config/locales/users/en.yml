@@ -40,7 +40,7 @@ en:
       be_manager: "Your role is Manager. No right!"
       be_user: "Your role is User. No right!"
       delete_failed: "Failed to remove this user from the department."
-      password_length: "Please enter a password with sufficient length."
+      password_length: "Please enter a password with sufficient %{count} length."
     assign:
       success: "Successfully added to the department!"
       fail: "Failed! Could not complete the assignment to the department."

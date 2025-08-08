@@ -40,7 +40,7 @@ vi:
       be_manager: "Vai trò của bạn là Manager, không thể thực hiện chức năng này!"
       be_user: "Vai trò của bạn là User. Không thể thực hiện chức năng này!"
       delete_failed: "Thất bại loại người này ra khỏi bộ phận."
-      password_length: "Vui lòng nhập đủ kỷ tự cho mật khẩu."
+      password_length: "Mật khẩu phải có ít nhất %{count} ký tự."
     assign:
       success: "Thêm vào bộ phận thành công!"
       fail: "Thất bại! Chưa hoàn tất thêm vào bộ phận."

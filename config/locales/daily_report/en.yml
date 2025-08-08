@@ -33,6 +33,8 @@ en:
       planned_tasks: "Planned Tasks"
       reviewed_at: "Reviewed At"
       action: "Action"
+      filter_button: "Filter"
+      reset_button: "Reset"
       table:
         no_result: "No matching records found."
       no_data_message: "You have no report. Create now!"
@@ -48,6 +50,7 @@ en:
       submit_create: "Create Report"
       submit_update: "Update Report"
       back: "Back"
+      mark_as_read: "Mark as read"
     show:
       title: "Daily Report Detail"
       report_info: "Report Information"

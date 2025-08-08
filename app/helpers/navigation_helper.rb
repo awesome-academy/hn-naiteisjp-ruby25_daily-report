@@ -1,6 +1,13 @@
 module NavigationHelper
   def nav_items_for role
-    all_items = [
+    all_items = nav_items
+    filter_items_by_role all_items, role
+  end
+
+  private
+
+  def nav_items
+    [
       {
         label: t("nav_items.dashboard"),
         path: root_path,
@@ -33,6 +40,12 @@ module NavigationHelper
       },
       {
         label: t("nav_items.reports"),
+        path: manager_daily_reports_path,
+        icon: "file",
+        roles: %w(manager)
+      },
+      {
+        label: t("nav_items.reports"),
         path: user_daily_reports_path,
         icon: "file",
         roles: %w(user)
@@ -50,7 +63,9 @@ module NavigationHelper
         roles: %w(admin manager user)
       }
     ]
+  end
 
-    all_items.select{|item| item[:roles].include?(role.to_s)}
+  def filter_items_by_role items, role
+    items.select{|item| item[:roles].include?(role.to_s)}
   end
 end

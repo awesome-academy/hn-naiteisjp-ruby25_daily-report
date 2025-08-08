@@ -1,0 +1,13 @@
+<h2 class="mb-4 text-center"><%= t("daily_report.show.title") %></h2>
+
+<%= render "shared/report_detail" %>
+
+<%= form_with model: [:manager, @daily_report], local: true do |f| %>
+  <div class="mb-3">
+    <%= f.label :manager_notes, t("daily_report.form.manager_notes"), class: "form-label" %>
+    <%= f.text_area :manager_notes, class: "form-control", rows: 5 %>
+  </div>
+
+  <%= f.submit t("daily_report.form.mark_as_read"), class: "btn btn-primary" %>
+  <%= link_to t("common.back"), manager_daily_reports_path, class: "btn btn-secondary ms-2" %>
+<% end %>

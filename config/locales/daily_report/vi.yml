@@ -16,7 +16,6 @@ vi:
       success: "Xóa báo cáo thành công."
       forbidden_status: "Chỉ có thể xóa báo cáo khi trạng thái là 'pending'."
     index:
-      title: "Danh sách các báo cáo"
       show: "Xem"
       edit: "Sửa"
       delete: "Xóa"
@@ -32,6 +31,8 @@ vi:
       planned_tasks: "Công việc dự kiến"
       reviewed_at: "Ngày duyệt"
       action: "Thao tác"
+      filter_button: "Lọc kết quả"
+      reset_button: "Reset"
       table:
         no_result: "Không có kết quả tìm kiếm tương ứng."
       no_data_message: "Bạn chưa có bản báo cáo nào."
@@ -49,6 +50,7 @@ vi:
       submit_create: "Tạo báo cáo"
       submit_update: "Cập nhật báo cáo"
       back: "Quay lại"
+      mark_as_read: "Đánh dấu là đã đọc"
     show:
       title: "Chi tiết báo cáo ngày"
       report_info: "Thông tin báo cáo"

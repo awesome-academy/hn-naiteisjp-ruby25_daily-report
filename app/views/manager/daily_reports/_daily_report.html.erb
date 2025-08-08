@@ -1,0 +1,14 @@
+<tr>
+  <td><%= daily_report.owner.name %></td>
+  <td><%= l(daily_report.created_at, format: :long) %></td>
+  <td><%= l(daily_report.report_date, format: :long) %></td>
+  <td>
+    <span class="badge <%= status_badge_class daily_report.status %>">
+      <%= daily_report.status.titleize %>
+    </span>
+  </td>
+  <td><%= truncate(daily_report.actual_tasks, length: Settings.MIN_LENGTH_TEXT_20) %></td>
+  <td>
+    <%= manager_daily_report_action_buttons daily_report %>
+  </td>
+</tr>

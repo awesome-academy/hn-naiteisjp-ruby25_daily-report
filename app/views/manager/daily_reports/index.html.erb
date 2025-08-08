@@ -1,0 +1,23 @@
+<h1 class="mb-4 text-center"><%= t "daily_report.index.title" %></h1>
+
+<%= render "filter_form" %>
+
+<table class="table table-bordered table-hover">
+  <thead class="table-dark">
+    <tr>
+      <th><%= t "daily_report.index.staff" %></th>
+      <th><%= t "daily_report.index.created_at" %></th>
+      <th><%= t "daily_report.index.report_date" %></th>
+      <th><%= t "daily_report.index.status" %></th>
+      <th><%= t "daily_report.index.actual_tasks" %></th>
+      <th><%= t "daily_report.index.actions" %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render @daily_reports %>
+  </tbody>
+</table>
+
+<div class="d-flex justify-content-center mt-4">
+  <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+</div>

@@ -25,7 +25,7 @@ class User < ApplicationRecord
             presence: true,
             length:   {
               minimum: Settings.MIN_LENGTH_PASSWORD,
-              message: I18n.t("users.error.password_length",
+              message: I18n.t("users.errors.password_length",
                               count: Settings.MIN_LENGTH_PASSWORD)
             },
             allow_nil: true
@@ -48,6 +48,10 @@ class User < ApplicationRecord
   }
   scope :managed_by, lambda {|manager|
     manager.present? && where(department_id: manager.department_id)
+  }
+  scope :unassigned_users, ->{where(department_id: nil, role: :user)}
+  scope :get_staff_members, lambda {|manager|
+    where(department_id: manager.department_id).where.not(id: manager.id)
   }
 
   class << self

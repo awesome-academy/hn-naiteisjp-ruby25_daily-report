@@ -42,3 +42,30 @@ new_user = User.create!(
   role: 0,
   password: "123456"
 )
+
+# Daily reports
+user1 = User.first
+user2 = User.second
+
+report_dates = 10.days.ago.to_date.upto(Date.today).to_a.sample(10)
+
+report_dates.each_with_index do |date, i|
+  owner = [user1, user2].sample
+
+  next if DailyReport.exists?(owner: owner, report_date: date)
+
+  DailyReport.create!(
+    owner: owner,
+    receiver: manager,
+    report_date: date,
+    status: DailyReport.statuses.keys.sample,
+    planned_tasks: "Plan for day #{i + 1} ----------------------------------------------------",
+    actual_tasks: "Did tasks #{i + 1} ----------------------------------------------------",
+    incomplete_reason: i.even? ? "Blocked by issue" : nil,
+    next_day_planned_tasks: "Next plan #{i + 2}----------------------------------------------------",
+    manager_notes: i.odd? ? "Looks good." : nil,
+    reviewed_at: Time.current - rand(1..5).days
+  )
+end
+
+puts "✅ Seeded sample users and daily reports!"
