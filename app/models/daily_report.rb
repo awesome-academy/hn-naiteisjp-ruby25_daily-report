@@ -10,6 +10,13 @@ class DailyReport < ApplicationRecord
                            next_day_planned_tasks).freeze
   MANAGER_NOTE_PARAM = :manager_notes
 
+  def self.ransackable_attributes _auth_object = nil
+    %w(actual_tasks created_at id incomplete_reason
+        manager_notes next_day_planned_tasks owner_id
+        planned_tasks receiver_id report_date
+        reviewed_at status updated_at)
+  end
+
   validates :planned_tasks, :actual_tasks, :next_day_planned_tasks,
             length: {minimum: Settings.MIN_LENGTH_TEXT_20}
 

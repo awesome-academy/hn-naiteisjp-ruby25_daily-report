@@ -1,8 +1,6 @@
 import "jquery"
 import "select2"
 
-window.$ = window.jQuery = $;
-
 document.addEventListener('turbo:load', function() {
   $('.select2').select2({
     allowClear: true,

@@ -13,12 +13,11 @@ module Manager::DepartmentsHelper
 
   def active_status_options selected_status
     options_for_select(
-      [
-        [t("users.index.all_status"), Settings.active_status[0]],
-        [t("users.index.active_status"), Settings.active_status[1]],
-        [t("users.index.inactive_status"), Settings.active_status[2]]
-      ],
-      selected_status || Settings.active_status[1]
+      [[t("users.index.all_status"), ""]] +
+      Settings.active_status.map do |status|
+        [I18n.t("users.index.filter.#{status}"), status]
+      end,
+      selected_status
     )
   end
 end

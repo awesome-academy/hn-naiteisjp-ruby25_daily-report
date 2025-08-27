@@ -60,6 +60,7 @@ gem "jquery-rails"
 gem "pagy"
 gem "paranoia"
 gem "rails-i18n"
+gem "ransack"
 gem "simple_calendar"
 
 group :development, :test do
@@ -90,6 +91,7 @@ group :test do
   gem "rspec-core"
   gem "rspec-rails"
   gem "selenium-webdriver"
+  gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "simplecov-rcov", require: false
   gem "webdrivers"

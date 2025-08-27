@@ -1,11 +1,18 @@
 class Admin::DepartmentsController < ApplicationController
+  load_and_authorize_resource class: Department.name
   before_action :admin_user
-  before_action :filter_departments, only: :index
-  before_action :find_department, only: %i(show edit update destroy)
+  before_action :convert_status_param, only: :index
   before_action :check_dependency_destroy_department, only: :destroy
 
   def index
-    @pagy, @departments = pagy @departments, limit: Settings.ITEMS_PER_PAGE_10
+    @q = Department.with_deleted
+                   .ransack params[:q]
+    @pagy, @departments = pagy(
+      @q.result.order_by_latest,
+      limit: Settings.ITEMS_PER_PAGE_10
+    )
+
+    flash[:info] = t "departments.index.table.no_result" if @departments.empty?
   end
 
   def new
@@ -59,29 +66,25 @@ class Admin::DepartmentsController < ApplicationController
     redirect_to admin_departments_path, status: :see_other
   end
 
-  def find_department
-    @department = Department.with_deleted.find_by id: params[:id]
-    return if @department
-
-    flash[:warning] = t("departments.index.table.no_result")
-  end
-
-  def filter_departments
-    @departments = Department.with_deleted
-                             .search_by_name(params[:query])
-                             .order_by_latest
-                             .with_status params[:deleted_at]
-    return if @departments.present?
-
-    flash[:warning] = t("departments.index.table.no_result")
-  end
-
   def handle_status_change
     case department_params[:deleted_at].to_s
-    when "1"
+    when Settings.be_one
       @department.restore if @department.deleted?
-    when "0"
+    when Settings.be_zero
       @department.destroy unless @department.deleted?
     end
+  end
+
+  def convert_status_param
+    status = params.dig(:q, :deleted_at_eq)
+    return if status.blank?
+
+    if status == Settings.active_status.first
+      params[:q][:deleted_at_null] = true
+    elsif status == Settings.active_status.last
+      params[:q][:deleted_at_not_null] = true
+    end
+
+    params[:q].delete(:deleted_at_eq)
   end
 end

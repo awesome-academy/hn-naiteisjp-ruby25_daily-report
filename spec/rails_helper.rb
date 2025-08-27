@@ -3,6 +3,9 @@ require "rspec/rails"
 require "factory_bot_rails"
 require "database_cleaner/active_record"
 require "rails-controller-testing"
+require "shoulda-matchers"
+require "spec_helper"
+
 Dir[Rails.root.join("spec", "support", "**", "*.rb")].sort.each { |f| require f }
 
 RSpec.configure do |config|
@@ -27,5 +30,12 @@ RSpec.configure do |config|
 
   config.after(:each) do
     DatabaseCleaner.clean
+  end
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end

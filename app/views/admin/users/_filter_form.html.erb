@@ -1,25 +1,36 @@
-<div class="row mb-4 align-items-end">
-  <div class="col-md-4">
-    <%= form_with url: admin_users_path, method: :get, local: true do |f| %>
-      <%= f.text_field :email, value: params[:email], placeholder: t("users.index.search_placeholder"), class: "form-control" %>
-    <% end %>
-  </div>
-  <div class="col-md-8 text-md-end mt-2 mt-md-0">
-      <%= form_with url: admin_users_path, method: :get, local: true, class: "row row-cols-lg-auto g-3 align-items-center mb-4" do |f| %>
-        <div class="col-md-4">
-          <%= f.label :role, t("users.index.filter.role"), class: "form-label" %>
-          <%= f.select :role, role_options_for_select, {include_blank: t("users.index.filter.all")}, class: "form-select" %>
-        </div>
+<%= search_form_for @q, url: admin_users_path, method: :get, local: true,
+                    class: "row row-cols-lg-auto g-3 align-items-center" do |f| %>
 
-        <div class="col-md-4">
-          <%= f.label :department_id, t("users.index.filter.department"), class: "form-label" %>
-          <%= f.select :department_id, department_options_for_select, {include_blank: t("users.index.filter.all")}, class: "form-select" %>
-        </div>
-
-        <div class="col-md-4 d-flex align-items-end gap-2">
-          <%= f.submit t("users.index.filter.submit"), class: "btn btn-primary me-2" %>
-          <%= link_to t("users.index.filter.reset"), admin_users_path, class: "btn btn-secondary" %>
-        </div>
-      <% end %>
+  <div class="col-md-3">
+    <%= f.text_field :email_cont,
+                      placeholder: t("users.index.search_placeholder"),
+                      class: "form-control" %>
   </div>
-</div>
+
+  <div class="col-md-1">
+    <%= f.label :role_eq, t("users.index.filter.role"), class: "form-label" %>
+    <%= f.select :role_eq, role_options_for_select,
+                  { include_blank: t("users.index.filter.all") },
+                  class: "form-select" %>
+  </div>
+
+  <div class="col-md-2">
+    <%= f.label :active_eq, t("users.index.filter.active"), class: "form-label" %>
+    <%= f.select :active_eq, active_options_for_select,
+                  { include_blank: t("users.index.filter.all") },
+                  class: "form-select" %>
+  </div>
+
+  <div class="col-md-2">
+    <%= f.label :department_id_eq, t("users.index.filter.department"), class: "form-label" %>
+    <%= f.select :department_id_eq, department_options_for_select,
+                  { include_blank: t("users.index.filter.all") },
+                  class: "form-select" %>
+  </div>
+
+  <div class="col-md-3">
+    <%= f.submit t("users.index.filter.submit"), class: "btn btn-primary me-2" %>
+    <%= link_to t("users.index.filter.reset"), admin_users_path, class: "btn btn-secondary" %>
+  </div>
+
+<% end %>

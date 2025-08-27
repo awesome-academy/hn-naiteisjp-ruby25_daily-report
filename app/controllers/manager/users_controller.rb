@@ -1,11 +1,12 @@
 class Manager::UsersController < ApplicationController
-  load_and_authorize_resource class: User.name
+  load_and_authorize_resource class: User.name, except: :create
   before_action :manager_user
   before_action :get_unassigned_users, only: %i(new create)
 
   def new; end
 
   def create
+    authorize! :create, User
     user = @available_users.find_by id: params[:user_id]
     department = current_user.department
     if user && department

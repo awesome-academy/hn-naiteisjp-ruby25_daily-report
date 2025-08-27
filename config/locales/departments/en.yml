@@ -41,6 +41,7 @@ en:
       no_description: "None"
       back: "Back to list"
       active_users_count: "Active Employees Number"
+      no_department_assigned: "You are not assigned to any department."
     destroy:
       success: "Department deleted successfully."
       fail: "Failed to delete department."

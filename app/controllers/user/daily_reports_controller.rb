@@ -2,7 +2,6 @@ class User::DailyReportsController < ApplicationController
   load_and_authorize_resource class: DailyReport.name
   before_action :check_user_role
   before_action :belongs_department?, except: %i(index)
-  before_action :filter_daily_reports, only: :index
   before_action :check_status, only: :edit
 
   def new
@@ -23,8 +22,11 @@ class User::DailyReportsController < ApplicationController
   end
 
   def index
+    @q = current_user.sent_reports
+                     .ransack params[:q]
+
     @pagy, @daily_reports = pagy(
-      @daily_reports,
+      @q.result.order_created_at_desc,
       limit: Settings.ITEMS_PER_PAGE_10
     )
   end
@@ -58,13 +60,6 @@ class User::DailyReportsController < ApplicationController
 
   def daily_report_params
     params.require(:daily_report).permit DailyReport::DAILY_REPORT_PARAMS
-  end
-
-  def filter_daily_reports
-    @daily_reports = current_user.sent_reports
-                                 .by_status(params[:status])
-                                 .by_report_date(params[:report_date])
-                                 .order_created_at_desc
   end
 
   def check_status

@@ -49,15 +49,23 @@ class User < ApplicationRecord
   USER_PARAMS_WITH_PW = USER_PARAMS + %w(password).freeze
   PROFILE_PARAMS = %w(name phone_number address avatar).freeze
 
+  def self.ransackable_attributes _auth_object = nil
+    %w(email role department_id active)
+  end
+
+  def self.ransackable_associations _auth_object = nil
+    %w(department received_reports sent_reports)
+  end
+
   scope :not_admin, ->{where.not(role: :admin)}
   scope :not_manager, ->{where.not(role: :manager)}
   scope :active, ->{where(active: true)}
   scope :inactive, ->{where(active: false)}
   scope :filter_by_active_status, lambda {|status|
     case status
-    when "active"
+    when Settings.active_status.first
       active
-    when "inactive"
+    when Settings.active_status.last
       inactive
     else
       all
@@ -79,6 +87,7 @@ class User < ApplicationRecord
   }
   scope :manager_count, ->{where(role: :manager).count}
   scope :user_count, ->{where(role: :user).count}
+  scope :by_active, ->{order(active: :desc)}
 
   # gem devise
   def active_for_authentication?

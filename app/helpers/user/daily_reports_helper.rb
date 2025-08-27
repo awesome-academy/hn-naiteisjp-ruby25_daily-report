@@ -105,4 +105,11 @@ module User::DailyReportsHelper
       end
     end
   end
+
+  def daily_report_status_options selected = params.dig(:q, :status_eq)
+    options_for_select(
+      DailyReport.statuses.map{|key, value| [key.titleize, value]},
+      selected
+    )
+  end
 end

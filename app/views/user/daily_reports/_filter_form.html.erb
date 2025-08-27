@@ -1,20 +1,20 @@
-<%= form_with url: user_daily_reports_path, method: :get, local: true, class: "row g-3 mb-3" do %>
+<%= search_form_for @q, url: user_daily_reports_path, method: :get, local: true, class: "row g-3 mb-3" do |f| %>
   <div class="col-md-4">
-    <%= label_tag :report_date, t("daily_report.index.report_date"), class: "form-label" %>
-    <%= date_field_tag :report_date, params[:report_date], class: "form-control" %>
+    <%= f.label :report_date_eq, t("daily_report.index.report_date"), class: "form-label" %>
+    <%= f.date_field :report_date_eq, value: params.dig(:q, :report_date_eq), class: "form-control" %>
   </div>
 
   <div class="col-md-4">
-    <%= label_tag :status, t("daily_report.index.status"), class: "form-label" %>
-    <%= select_tag :status,
-      options_for_select(DailyReport.statuses.keys.map { |s| [s.titleize, s] }, params[:status]),
+    <%= f.label :status_eq, t("daily_report.index.status"), class: "form-label" %>
+    <%= f.select :status_eq,
+      daily_report_status_options,
       include_blank: t("daily_report.index.all_status"),
       class: "form-select"
     %>
   </div>
 
   <div class="col-md-4 d-flex align-items-end">
-    <%= submit_tag t("daily_report.index.filter"), class: "btn btn-primary me-2" %>
+    <%= f.submit t("daily_report.index.filter"), class: "btn btn-primary me-2" %>
     <%= link_to t("daily_report.index.reset"), user_daily_reports_path, class: "btn btn-secondary" %>
   </div>
 <% end %>

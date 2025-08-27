@@ -99,26 +99,37 @@ RSpec.describe User::DailyReportsController, type: :controller do
   end
 
   describe "GET #index" do
-    before do
-      allow(controller).to receive(:filter_daily_reports)
-      allow(controller).to receive(:pagy).and_return(pagy_result)
-      get :index
-    end
+    context "when user is logged in" do
+      let(:user) { create(:user, active: true) }
+      let(:other_user) { create(:user, active: true) }
 
-    it "calls filter_daily_reports" do
-      expect(controller).to have_received(:filter_daily_reports)
-    end
+      let!(:user_reports) { create_list(:daily_report, 2, owner: user) }
+      let!(:other_user_report) { create(:daily_report, owner: other_user) }
+      before do
+        sign_in user
+        get :index, params: { locale: :en }
+      end
 
-    it "paginates daily reports" do
-      expect(controller).to have_received(:pagy)
-    end
+      it "assigns a Ransack search object to @q" do
+        expect(assigns(:q)).to be_a(Ransack::Search)
+      end
 
-    it "renders index template" do
-      expect(response).to render_template(:index)
-    end
+      it "assigns the correct daily reports for the user to @daily_reports" do
+        expect(assigns(:daily_reports)).to match_array(user_reports)
+        expect(assigns(:daily_reports)).not_to include(other_user_report)
+      end
 
-    it "filter by status" do
-      expect(controller).to have_received(:filter_daily_reports)
+      it "assigns a Pagy object to @pagy" do
+        expect(assigns(:pagy)).to be_a(Pagy)
+      end
+
+      it "renders the 'index' template" do
+        expect(response).to render_template(:index)
+      end
+
+      it "returns a successful response" do
+        expect(response).to have_http_status(:success)
+      end
     end
   end
 
@@ -308,105 +319,6 @@ RSpec.describe User::DailyReportsController, type: :controller do
 
         it "redirects to index" do
           expect(response).to redirect_to(user_daily_reports_path)
-        end
-      end
-    end
-
-    describe "#filter_daily_reports" do
-      let(:sent_reports) { double("sent_reports") }
-      let(:filtered_by_status) { double("filtered_by_status") }
-      let(:filtered_by_date) { double("filtered_by_date") }
-      let(:ordered_reports) { double("ordered_reports") }
-
-      before do
-        allow(controller).to receive(:current_user).and_return(user)
-        allow(user).to receive(:sent_reports).and_return(sent_reports)
-        allow(sent_reports).to receive(:by_status).and_return(filtered_by_status)
-        allow(filtered_by_status).to receive(:by_report_date).and_return(filtered_by_date)
-        allow(filtered_by_date).to receive(:order_created_at_desc).and_return(ordered_reports)
-      end
-
-      context "when both status and report_date params are present" do
-        before do
-          allow(controller).to receive(:params).and_return({ status: "pending", report_date: "2024-06-01" })
-          controller.send(:filter_daily_reports)
-        end
-
-        it "calls sent_reports on current_user" do
-          expect(user).to have_received(:sent_reports)
-        end
-
-        it "filters by status" do
-          expect(sent_reports).to have_received(:by_status).with("pending")
-        end
-
-        it "filters by report_date" do
-          expect(filtered_by_status).to have_received(:by_report_date).with("2024-06-01")
-        end
-
-        it "orders by created_at desc" do
-          expect(filtered_by_date).to have_received(:order_created_at_desc)
-        end
-
-        it "assigns @daily_reports" do
-          expect(controller.instance_variable_get(:@daily_reports)).to eq(ordered_reports)
-        end
-      end
-
-      context "when only status param is present" do
-        before do
-          allow(controller).to receive(:params).and_return({ status: "approved", report_date: nil })
-          controller.send(:filter_daily_reports)
-        end
-
-        it "filters by status" do
-          expect(sent_reports).to have_received(:by_status).with("approved")
-        end
-
-        it "filters by report_date with nil" do
-          expect(filtered_by_status).to have_received(:by_report_date).with(nil)
-        end
-
-        it "orders by created_at desc" do
-          expect(filtered_by_date).to have_received(:order_created_at_desc)
-        end
-      end
-
-      context "when only report_date param is present" do
-        before do
-          allow(controller).to receive(:params).and_return({ status: nil, report_date: "2024-06-02" })
-          controller.send(:filter_daily_reports)
-        end
-
-        it "filters by status with nil" do
-          expect(sent_reports).to have_received(:by_status).with(nil)
-        end
-
-        it "filters by report_date" do
-          expect(filtered_by_status).to have_received(:by_report_date).with("2024-06-02")
-        end
-
-        it "orders by created_at desc" do
-          expect(filtered_by_date).to have_received(:order_created_at_desc)
-        end
-      end
-
-      context "when neither status nor report_date params are present" do
-        before do
-          allow(controller).to receive(:params).and_return({ status: nil, report_date: nil })
-          controller.send(:filter_daily_reports)
-        end
-
-        it "filters by status with nil" do
-          expect(sent_reports).to have_received(:by_status).with(nil)
-        end
-
-        it "filters by report_date with nil" do
-          expect(filtered_by_status).to have_received(:by_report_date).with(nil)
-        end
-
-        it "orders by created_at desc" do
-          expect(filtered_by_date).to have_received(:order_created_at_desc)
         end
       end
     end

@@ -1,26 +1,31 @@
 class Manager::DepartmentsController < ApplicationController
   load_and_authorize_resource class: Department.name
   before_action :manager_user
-  before_action :filter_users, only: :show
+  before_action :set_department
 
   def show
-    @department = current_user.department
+    return if @department.blank?
+
     @active_users_count = @department.users.active
                                      .not_manager
                                      .count
-    @pagy, @users = pagy @users, limit: Settings.ITEMS_PER_PAGE_5
+    @q = User.managed_by(current_user)
+             .filter_by_active_status(active_status_param)
+             .ransack params[:q]
+    @pagy, @users = pagy(
+      @q.result,
+      limit: Settings.ITEMS_PER_PAGE_5
+    )
   end
 
   private
 
-  def filter_users
-    @users = User.managed_by(current_user)
-                 .filter_by_active_status(active_status_param)
-                 .filter_by_email params[:email]
+  def active_status_param
+    params.dig(:q, :active_eq) ||
+      Settings.active_status.first
   end
 
-  def active_status_param
-    params[:active_status].presence ||
-      Settings.active_status[1]
+  def set_department
+    @department = current_user.department
   end
 end

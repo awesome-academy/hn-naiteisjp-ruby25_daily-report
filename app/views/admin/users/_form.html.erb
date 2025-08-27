@@ -13,9 +13,7 @@
 
   <div class="form-group">
     <%= f.label :role, t("users.form.role") %>
-    <%= f.select :role, ["user", "manager"].map { |r| [r.humanize, r] }, {}, class: "form-control" %>
-  </div>
-
+    <%= f.select :role, Settings.FILTER_ROLE.map { |r| [r.humanize, r] }, {}, class: "form-control" %>  </div>
   <div class="form-group">
     <%= f.label :active, t("users.form.active"), class: "form-check-label" %>
     <%= f.check_box :active, class: "form-check-input" %>

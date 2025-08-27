@@ -29,9 +29,7 @@ RSpec.describe PasswordsController, type: :controller do
               locale: :en,
               user: { email: user.email }
             }
-            puts "Deliveries: #{ActionMailer::Base.deliveries.inspect}"
         end
-        # .to change { ActionMailer::Base.deliveries.count }.by(1)
         expect(response).to have_http_status(:ok)
       end
     end

@@ -41,6 +41,7 @@ vi:
       no_description: "Không có"
       back: "Quay lại danh sách"
       active_users_count: "Số lượng nhân viên hoạt động"
+      no_department_assigned: "Bạn chưa thuộc bộ phận nào."
     destroy:
       success: "Xóa bộ phận thành công"
       fail: "Xóa bộ phận thất bại"

@@ -1,7 +1,6 @@
 class Admin::UsersController < ApplicationController
-  load_and_authorize_resource class: User
+  load_and_authorize_resource class: User.name
   before_action :admin_user
-  before_action :filter_users, only: :index
 
   def new
     @generated_password = SecureRandom.alphanumeric Settings.RANDOM_PW_LENGTH
@@ -26,7 +25,11 @@ class Admin::UsersController < ApplicationController
   def show; end
 
   def index
-    @pagy, @users = pagy @users, limit: Settings.ITEMS_PER_PAGE_10
+    @q = User.not_admin.ransack params[:q]
+    @pagy, @users = pagy(
+      @q.result.by_active,
+      limit: Settings.ITEMS_PER_PAGE_10
+    )
   end
 
   def edit
@@ -38,8 +41,8 @@ class Admin::UsersController < ApplicationController
     old_role = @user.role
 
     if @user.update user_params
-      update_department_manager(old_department_id, old_role)
-      flash[:success] = t("users.edit.updated_successfully")
+      update_department_manager old_department_id, old_role
+      flash[:success] = t "users.edit.updated_successfully"
       redirect_to admin_users_path
     else
       @departments = Department.all
@@ -66,13 +69,6 @@ class Admin::UsersController < ApplicationController
     params.require(:user).permit User::USER_PARAMS_WITH_PW
   end
 
-  def filter_users
-    @users = User.not_admin
-                 .filter_by_email(params[:email])
-                 .filter_by_role(params[:role])
-                 .filter_by_department params[:department_id]
-  end
-
   def update_department_manager old_department_id, old_role
     remove_old_manager old_department_id, old_role
     assign_new_manager
@@ -83,12 +79,12 @@ class Admin::UsersController < ApplicationController
                   old_department_id.present? &&
                   (old_department_id != @user.department_id || @user.user?)
 
-    Department.find_by(id: old_department_id)&.update(manager_id: nil)
+    Department.find_by(id: old_department_id)&.update manager_id: nil
   end
 
   def assign_new_manager
     return unless @user.manager? && @user.department_id.present?
 
-    @user.department&.update(manager_id: @user.id)
+    @user.department&.update manager_id: @user.id
   end
 end
