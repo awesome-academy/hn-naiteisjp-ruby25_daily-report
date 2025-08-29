@@ -50,3 +50,5 @@ vi:
   index:
     table:
       order: "STT"
+
+  back: "Quay về"

@@ -1,14 +1,7 @@
 require "rails_helper"
 
 RSpec.describe PasswordsController, type: :controller do
-  include Devise::Test::ControllerHelpers
-  include Devise::Test::IntegrationHelpers
-
   render_views
-
-  before do
-    @request.env["devise.mapping"] = Devise.mappings[:user]
-  end
 
   let!(:user) do
     User.create!(

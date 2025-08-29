@@ -1,0 +1,38 @@
+<h2 class="text-center"><%= t "users.profile.general_information" %></h2>
+
+<%= form_for @user, url: profile_path, html: { method: :put } do |f| %>
+  <%= render "devise/shared/error_messages", resource: @user %>
+
+  <div class="form-group row">
+    <%= f.label :name, class: "col-md-1" %>
+    <div class="col-md-9">
+      <%= f.text_field :name, autocomplete: "name", readonly: true, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :email, class: "col-md-1" %>
+    <div class="col-md-9">
+      <%= f.email_field :email, autofocus: true, autocomplete: "email", readonly: true, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :phone_number, class: "col-md-1" %>
+    <div class="col-md-9">
+      <%= f.text_field :phone_number, autocomplete: "phone_number", class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <%= f.label :address, class: "col-md-1" %>
+    <div class="col-md-9">
+      <%= f.text_field :address, autocomplete: "address", class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="actions text-center mt-4">
+    <%= f.submit t("users.profile.update_btn"), class: "btn btn-primary" %>
+    <%= link_to t("back"), profile_path %>
+  </div>
+<% end %>

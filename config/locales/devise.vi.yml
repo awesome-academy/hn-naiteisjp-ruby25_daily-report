@@ -57,8 +57,14 @@ vi:
       signed_up_but_locked: "Bạn đã đăng ký thành công. Tuy nhiên, chúng tôi không thể đăng nhập bạn vì tài khoản của bạn đã bị khóa."
       signed_up_but_unconfirmed: "Một tin nhắn có liên kết xác nhận đã được gửi đến địa chỉ email của bạn. Vui lòng nhấp vào liên kết để kích hoạt tài khoản của bạn."
       update_needs_confirmation: "Bạn đã cập nhật tài khoản của mình thành công, nhưng chúng tôi cần xác minh địa chỉ email mới của bạn. Vui lòng kiểm tra email của bạn và nhấp vào liên kết xác nhận để xác nhận địa chỉ email mới của bạn."
-      updated: "Tài khoản của bạn đã được cập nhật thành công."
+      updated: "Mật khẩu của bạn đã được cập nhật thành công."
       updated_but_not_signed_in: "Tài khoản của bạn đã được cập nhật thành công, nhưng vì mật khẩu của bạn đã được thay đổi, bạn cần đăng nhập lại."
+      edit:
+        change_your_password: "Đổi mật khẩu"
+        current_password: "Mật khẩu hiện tại"
+        new_password: "Mật khẩu mới"
+        characters_minimum: "ký tự tối thiểu"
+        confirm_new_password: "Xác nhận mật khẩu mới"
     sessions:
       new:
         sign_in: "Đăng nhập"

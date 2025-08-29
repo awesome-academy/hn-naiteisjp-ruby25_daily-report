@@ -49,3 +49,5 @@ en:
   index:
     table:
       order: "No."
+
+  back: "Back"

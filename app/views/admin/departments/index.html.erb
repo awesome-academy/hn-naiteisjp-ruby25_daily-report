@@ -1,16 +1,25 @@
 <h1 class="text-center"><%= t("departments.index.title") %></h1>
 
+
+<%= link_to new_admin_department_path, class: "btn btn-success" do %>
+  <i class="fas fa-plus"></i> <%= t("departments.index.add_button") %>
+<% end %>
+
 <div class="row mb-4 align-items-end">
-  <div class="col-md-10">
-    <%= form_with url: admin_departments_path, method: :get, local: true do |f| %>
+  <%= form_with url: admin_departments_path, method: :get, local: true do |f| %>
+    <div class="col-md-6">
       <%= f.text_field :query, value: params[:query], placeholder: t("departments.index.search_placeholder"), class: "form-control" %>
-    <% end %>
-  </div>
-  <div class="col-md-2 text-md-end mt-2 mt-md-0">
-    <%= link_to new_admin_department_path, class: "btn btn-success" do %>
-      <i class="fas fa-plus"></i> <%= t("departments.index.add_button") %>
-    <% end %>
-  </div>
+    </div>
+    <div class="col-md-2">
+      <%= f.select :deleted_at, department_status_options, { include_blank: t("departments.index.table.all") }, class: "form-control" %>
+    </div>
+
+    <div class="col-md-2">
+      <%= f.submit t("users.index.filter.submit"), class: "btn btn-primary me-2" %>
+      <%= link_to t("users.index.filter.reset"), admin_departments_path, class: "btn btn-secondary" %>
+    </div>
+
+  <% end %>
 </div>
 
 <%= render "table_content_departments" %>

@@ -98,7 +98,7 @@ RSpec.describe Department, type: :model do
 
   describe "constants" do
     it "defines DEPARTMENT_PARAMS" do
-      expect(described_class::DEPARTMENT_PARAMS).to eq(%w(name description))
+      expect(described_class::DEPARTMENT_PARAMS).to eq(%w(name description deleted_at))
     end
   end
 

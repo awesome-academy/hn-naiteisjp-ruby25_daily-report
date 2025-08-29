@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /en|vi/ do
-    devise_for :users, controllers: { sessions: "sessions", passwords: "passwords" }
     root "static_pages#help"
+    devise_for :users, controllers: {
+        sessions: "sessions",
+        passwords: "passwords",
+        registrations: "registrations"}
+    resource :profile, only:  %i(show edit update)
     resources :departments
     namespace :admin do
       get "dashboard/show", to: "dashboard#show"

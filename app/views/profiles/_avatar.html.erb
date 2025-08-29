@@ -1,0 +1,14 @@
+<div class="col-md-3 card-body text-center">
+  <%= avatar_for(@user) %>
+  <%= form_for @user, url: profile_path, html: {method: :put} do |f| %>
+    <%= render "shared/error_messages", object: f.object %>
+
+    <div class="form-group">
+      <%= f.label :avatar, class: "btn btn-primary btn-block" do %>
+        <%= t(".choose_file") %>
+        <%= f.file_field :avatar, style: "display: none;", class: "js-avatar-upload" %>
+      <% end %>
+      <%= f.submit style: "display: none;" %>
+    </div>
+  <% end %>
+</div>

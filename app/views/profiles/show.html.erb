@@ -1,0 +1,9 @@
+<h2 class="text-center"><%= t "users.profile.title" %></h2>
+
+<%= render "avatar" %>
+<%= render "user_info" %>
+
+<div class="text-center">
+  <%= link_to t("users.profile.edit_profile"), edit_profile_path, class: "btn btn-primary" %>
+  <%= link_to t("users.profile.change_password"), edit_user_registration_path, class: "btn btn-secondary" %>
+</div>

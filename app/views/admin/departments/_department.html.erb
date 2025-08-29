@@ -3,6 +3,13 @@
   <td><%= department.name %></td>
   <td><%= department.users.count %></td>
   <td><%= department.description %></td>
+  <td>
+    <% if department.deleted_at.nil? %>
+      <span class="badge badge-success"><%= t "departments.index.table.active" %></span>
+    <% else %>
+      <span class="badge badge-secondary"><%= t "departments.index.table.inactive" %></span>
+    <% end %>
+  </td>
   <td class="d-flex gap-1">
     <%= admin_department_action_buttons department %>
   </td>

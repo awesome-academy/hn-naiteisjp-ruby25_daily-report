@@ -80,6 +80,12 @@ module NavigationHelper
         roles: %w(user)
       },
       {
+        label: "profile",
+        path: profile_path,
+        icon: "user",
+        roles: %w(user)
+      },
+      {
         label: "logout",
         path: nil,
         icon: "sign-out",

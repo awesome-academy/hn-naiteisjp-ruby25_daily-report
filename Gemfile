@@ -46,8 +46,9 @@ gem "bootsnap", require: false
 # gem "sassc-rails"
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html]
-# gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 1.2"
 
+gem "active_storage_validations", "0.9.8"
 gem "bcrypt", "3.1.18"
 gem "bootstrap-sass", "3.4.1"
 gem "cancancan"
@@ -57,6 +58,7 @@ gem "dotenv-rails"
 gem "i18n-js", "<= 3.9.2"
 gem "jquery-rails"
 gem "pagy"
+gem "paranoia"
 gem "rails-i18n"
 gem "simple_calendar"
 

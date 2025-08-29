@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe User::DailyReportsController, type: :controller do
-  include Devise::Test::ControllerHelpers
-
   let(:user) { create(:user, active: true) }
   let(:manager) { create(:user, :manager) }
   let(:daily_report) { build_stubbed(:daily_report, owner: user, receiver: manager) }

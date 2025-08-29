@@ -1,6 +1,11 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :recoverable,
-         :rememberable, :validatable
+         :registerable, :rememberable, :validatable
+
+  has_one_attached :avatar do |attachable|
+    attachable.variant :display,
+                       resize_to_limit: Settings.IMAGE_RESIZE_TO_LIMIT_500_500
+  end
 
   belongs_to :department, optional: true
   has_many :sent_reports,
@@ -24,6 +29,14 @@ class User < ApplicationRecord
               case_sensitive: false,
               message: I18n.t("users.errors.email_already_exists")
             }
+  validates :avatar,
+            content_type: {
+              in: %w(image/jpeg image/gif image/png),
+              message: I18n.t("users.profile.avatar_type_error")
+            },
+            size: {
+              less_than: Settings.IMAGE_SIZE_LARGE_LIMIT_5.megabytes
+            }
 
   enum role: Settings.user_role.to_h
   delegate :name, to: :department, prefix: true
@@ -34,6 +47,7 @@ class User < ApplicationRecord
 
   USER_PARAMS = %w(name email role department_id active).freeze
   USER_PARAMS_WITH_PW = USER_PARAMS + %w(password).freeze
+  PROFILE_PARAMS = %w(name phone_number address avatar).freeze
 
   scope :not_admin, ->{where.not(role: :admin)}
   scope :not_manager, ->{where.not(role: :manager)}

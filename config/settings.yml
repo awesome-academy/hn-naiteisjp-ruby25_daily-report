@@ -31,8 +31,11 @@ MAILER_PORT: 3000
 RANDOM_PW_LENGTH: 6
 
 active_status:
-  - all
   - active
   - inactive
 
 ROLE_MANAGER: "manager"
+
+AVATAR_SIZE_200: 200
+IMAGE_SIZE_LARGE_LIMIT_5: 5
+IMAGE_RESIZE_TO_LIMIT_500_500: [500, 500]

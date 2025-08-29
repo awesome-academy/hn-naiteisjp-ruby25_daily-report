@@ -7,5 +7,9 @@ FactoryBot.define do
     trait :without_manager do
       manager { nil }
     end
+
+    trait :deleted do
+      deleted_at { Time.zone.now }
+    end
   end
 end

@@ -1,0 +1,36 @@
+<h2 class="text-center mb-3"><%= t("devise.registrations.edit.change_your_password") %></h2>
+
+<%= form_for resource, as: resource_name, url: user_registration_path(locale: I18n.locale), html: { method: :put } do |f| %>
+  <%= render "devise/shared/error_messages", resource: resource %>
+
+  <div class="form-group row mb-2 align-items-center">
+    <%= f.label :current_password, t("devise.registrations.edit.current_password"), class: "col-md-2" %>
+    <div class="col-md-10">
+      <%= f.password_field :current_password, autocomplete: "current-password", class: "form-control form-control-sm" %>
+    </div>
+  </div>
+
+  <div class="form-group row mb-2 align-items-center">
+    <%= f.label :password, t("devise.registrations.edit.new_password"), class: "col-md-2" %>
+    <div class="col-md-10">
+      <%= f.password_field :password, autocomplete: "new-password", class: "form-control form-control-sm" %>
+      <% if @minimum_password_length %>
+        <small class="form-text text-muted">
+          (<%= @minimum_password_length %> <%= t("devise.registrations.edit.characters_minimum") %>)
+        </small>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="form-group row mb-2 align-items-center">
+    <%= f.label :password_confirmation, t("devise.registrations.edit.confirm_new_password"), class: "col-md-2" %>
+    <div class="col-md-10">
+      <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control form-control-sm" %>
+    </div>
+  </div>
+
+  <div class="actions text-center mt-3">
+    <%= f.submit t("devise.registrations.update_password"), class: "btn btn-sm btn-primary px-4" %>
+    <%= link_to t("back"), profile_path, class: "small" %>
+  </div>
+<% end %>
