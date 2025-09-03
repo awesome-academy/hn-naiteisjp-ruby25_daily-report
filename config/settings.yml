@@ -42,3 +42,5 @@ IMAGE_RESIZE_TO_LIMIT_500_500: [500, 500]
 
 be_one: "0"
 be_zero: "1"
+
+CONTENT_DISPOSITION_FORMAT: "attachment; filename=\"%{filename}\""

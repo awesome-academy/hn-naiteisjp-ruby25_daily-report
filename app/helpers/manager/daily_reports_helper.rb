@@ -10,4 +10,14 @@ module Manager::DailyReportsHelper
       end
     end
   end
+
+  def daily_report_filter_params
+    params[:q]&.permit DailyReport::DEPARTMENT_FILTER_PARAMS
+  end
+
+  def manager_daily_report_status_options
+    DailyReport.statuses.keys.map do |s|
+      [t("daily_report.statuses.#{s}"), DailyReport.statuses[s]]
+    end
+  end
 end

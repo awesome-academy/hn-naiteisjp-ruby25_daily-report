@@ -8,7 +8,8 @@ RSpec.describe Manager::DailyReportsController, type: :controller do
 
   let!(:staff_report) do
     create(:daily_report, owner: staff_member, receiver: manager,
-                          manager_notes: nil, status: :pending)
+                          manager_notes: nil, status: :pending,
+                          report_date: Date.current)
   end
   let!(:other_report) { create(:daily_report, owner: other_staff) }
 
@@ -18,21 +19,67 @@ RSpec.describe Manager::DailyReportsController, type: :controller do
     end
 
     describe "GET #index" do
-      before do
-        get :index
+      context "with HTML format" do
+        before do
+          get :index
+        end
+
+        it "assigns the correct staff members to @staff_members" do
+          expect(assigns(:staff_members)).to match_array([staff_member])
+        end
+
+        it "assigns the correct staff reports to @daily_reports (paginated)" do
+          expect(assigns(:daily_reports)).to match_array([staff_report])
+          expect(assigns(:daily_reports)).not_to include(other_report)
+        end
+
+        it "renders the 'index' template" do
+          expect(response).to render_template(:index)
+        end
       end
 
-      it "assigns the correct staff members to @staff_members" do
-        expect(assigns(:staff_members)).to match_array([staff_member])
-      end
+      context "with XLSX format" do
+        context "when conditions are valid" do
+          before do
+            get :index, params: { format: :xlsx, q: { report_date_eq: Date.current }, locale: :en }
+          end
 
-      it "assigns the correct daily reports of staff members to @daily_reports" do
-        expect(assigns(:daily_reports)).to match_array([staff_report])
-        expect(assigns(:daily_reports)).not_to include(other_report)
-      end
+          it "returns a successful response" do
+            expect(response).to have_http_status(:success)
+          end
 
-      it "renders the 'index' template" do
-        expect(response).to render_template(:index)
+          it "sets the Content-Disposition header for file download" do
+            expect(response.headers["Content-Disposition"]).to include("attachment; filename=\"daily_reports_#{Date.current.strftime('%Y-%m-%d')}.xlsx\"")
+          end
+        end
+
+        context "when no date is selected for export" do
+          before do
+            get :index, params: { format: :xlsx, q: { report_date_eq: "" }, locale: :en }
+          end
+
+          it "redirects back to the index page" do
+            expect(response).to redirect_to(manager_daily_reports_path)
+          end
+
+          it "shows a warning message asking to select a date" do
+            expect(flash[:warning]).to eq(I18n.t("daily_report.index.export.select_date"))
+          end
+        end
+
+        context "when there are no reports to export" do
+          before do
+            get :index, params: { format: :xlsx, q: { report_date_eq: Date.current - 10.days }, locale: :en }
+          end
+
+          it "redirects back to the index page" do
+            expect(response).to redirect_to(manager_daily_reports_path)
+          end
+
+          it "shows a warning message indicating no reports are available" do
+            expect(flash[:warning]).to eq(I18n.t("daily_report.index.export.no_reports"))
+          end
+        end
       end
     end
 

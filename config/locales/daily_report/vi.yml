@@ -16,6 +16,7 @@ vi:
       success: "Xóa báo cáo thành công."
       forbidden_status: "Chỉ có thể xóa báo cáo khi trạng thái là pending."
     index:
+      title: "Danh sách báo cáo"
       show: "Xem"
       edit: "Sửa"
       delete: "Xóa"
@@ -36,6 +37,22 @@ vi:
       table:
         no_result: "Không có kết quả tìm kiếm tương ứng."
       no_data_message: "Bạn chưa có bản báo cáo nào."
+      export:
+        select_date: "Vui lòng chọn ngày để xuất báo cáo."
+        no_reports: "Không tìm thấy báo cáo nào để xuất theo tiêu chí đã chọn."
+        filename: "bao_cao_ngay_%{date}.xlsx"
+        btn: "Xuất ra Excel"
+      excel:
+        sheet_name: "Báo cáo hàng ngày"
+        header:
+          staff_name: "Tên nhân viên"
+          report_date: "Ngày báo cáo"
+          status: "Trạng thái"
+          planned_tasks: "Công việc dự kiến"
+          actual_tasks: "Công việc thực tế"
+          incomplete_reason: "Lý do chưa hoàn thành"
+          next_day_planned_tasks: "Kế hoạch ngày tiếp theo"
+          manager_notes: "Ghi chú của quản lý"
     new:
       confirm_delete: "Bạn có chắc chắn muốn xóa báo cáo này không?"
     form:

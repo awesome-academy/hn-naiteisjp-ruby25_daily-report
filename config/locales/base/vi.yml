@@ -52,3 +52,6 @@ vi:
       order: "STT"
 
   back: "Quay về"
+  date:
+    formats:
+      filename_date: "%d-%m-%Y"

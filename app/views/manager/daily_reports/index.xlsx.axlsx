@@ -1,0 +1,27 @@
+wb = xlsx_package.workbook
+wb.add_worksheet(name: t("daily_report.index.excel.sheet_name")) do |sheet|
+  header_style = wb.styles.add_style(bg_color: "4F81BD", fg_color: "FF", b: true, alignment: { horizontal: :center })
+  sheet.add_row [
+    t("daily_report.index.excel.header.staff_name"),
+    t("daily_report.index.excel.header.report_date"),
+    t("daily_report.index.excel.header.status"),
+    t("daily_report.index.excel.header.planned_tasks"),
+    t("daily_report.index.excel.header.actual_tasks"),
+    t("daily_report.index.excel.header.incomplete_reason"),
+    t("daily_report.index.excel.header.next_day_planned_tasks"),
+    t("daily_report.index.excel.header.manager_notes")
+  ], style: header_style
+
+  @daily_reports.each do |report|
+    sheet.add_row [
+      report.owner.name,
+      report.report_date,
+      report.status.titleize,
+      report.planned_tasks,
+      report.actual_tasks,
+      report.incomplete_reason,
+      report.next_day_planned_tasks,
+      report.manager_notes
+    ]
+  end
+end
