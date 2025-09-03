@@ -51,3 +51,6 @@ en:
       order: "No."
 
   back: "Back"
+  date:
+    formats:
+      filename_date: "%Y-%m-%d"

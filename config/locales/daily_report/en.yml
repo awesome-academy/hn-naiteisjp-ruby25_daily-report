@@ -38,6 +38,22 @@ en:
       table:
         no_result: "No matching records found."
       no_data_message: "You have no report. Create now!"
+      export:
+        select_date: "Please select a date to export reports."
+        no_reports: "No reports found to export for the selected criteria."
+        filename: "daily_reports_%{date}.xlsx"
+        btn: "Export to Excel"
+      excel:
+        sheet_name: "Daily Reports"
+        header:
+          staff_name: "Staff Name"
+          report_date: "Report Date"
+          status: "Status"
+          planned_tasks: "Planned Tasks"
+          actual_tasks: "Actual Tasks"
+          incomplete_reason: "Incomplete Reason"
+          next_day_planned_tasks: "Next Day Planned Tasks"
+          manager_notes: "Manager Notes"
     form:
       staff_name: "Staff Name"
       manager_name: "Manager Name"

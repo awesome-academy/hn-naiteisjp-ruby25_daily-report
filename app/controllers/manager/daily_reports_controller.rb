@@ -4,12 +4,12 @@ class Manager::DailyReportsController < ApplicationController
   before_action :set_staff_members, only: :index
 
   def index
-    @q = DailyReport.by_owner_id(@staff_members.pluck(:id))
-                    .ransack params[:q]
-    @pagy, @daily_reports = pagy(
-      @q.result.includes(:owner).order_created_at_desc,
-      items: Settings.ITEMS_PER_PAGE_10
-    )
+    reports_query = search_and_filter_reports
+
+    respond_to do |format|
+      format.html{handle_html_request(reports_query)}
+      format.xlsx{handle_xlsx_request(reports_query)}
+    end
   end
 
   def edit; end
@@ -50,5 +50,50 @@ class Manager::DailyReportsController < ApplicationController
     else
       :read
     end
+  end
+
+  def search_and_filter_reports
+    @q = DailyReport.by_owner_id(@staff_members.pluck(:id))
+                    .ransack params[:q]
+    @q.result.includes(:owner).order_created_at_desc
+  end
+
+  def handle_html_request query
+    @pagy, @daily_reports = pagy query, items: Settings.ITEMS_PER_PAGE_10
+  end
+
+  def handle_xlsx_request query
+    @daily_reports = query
+
+    return redirect_to manager_daily_reports_path unless export_is_valid?
+
+    set_excel_filename
+  end
+
+  def export_is_valid?
+    if params.dig(:q, :report_date_eq).blank?
+      flash[:warning] = t "daily_report.index.export.select_date"
+      return false
+    end
+
+    if @daily_reports.blank?
+      flash[:warning] = t "daily_report.index.export.no_reports"
+      return false
+    end
+
+    true
+  end
+
+  def set_excel_filename
+    report_date = Date.parse params.dig(:q, :report_date_eq)
+    formatted_date = l report_date, format: :filename_date
+
+    filename = t(
+      "daily_report.index.export.filename",
+      date: formatted_date
+    )
+
+    cdf = Settings.CONTENT_DISPOSITION_FORMAT
+    response.headers["Content-Disposition"] = format cdf, filename:
   end
 end

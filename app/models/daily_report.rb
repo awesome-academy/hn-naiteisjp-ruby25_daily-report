@@ -9,6 +9,7 @@ class DailyReport < ApplicationRecord
                            incomplete_reason
                            next_day_planned_tasks).freeze
   MANAGER_NOTE_PARAM = :manager_notes
+  DEPARTMENT_FILTER_PARAMS = %w(owner_id_eq report_date_eq status_eq).freeze
 
   def self.ransackable_attributes _auth_object = nil
     %w(actual_tasks created_at id incomplete_reason
