@@ -9,7 +9,7 @@ module Admin::DepartmentsHelper
     end
   end
 
-  def department_status_options selected = params[:status]
+  def department_status_options selected = params.dig(:q, :deleted_at_eq)
     options_for_select(status_options, selected)
   end
 

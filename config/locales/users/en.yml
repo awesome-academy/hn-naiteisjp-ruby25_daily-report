@@ -16,6 +16,8 @@ en:
         all: "All"
         submit: "Filter"
         reset: "Reset"
+        active: "Active"
+        inactive: "Inactive"
       add_new_member_btn: "Add new member"
       import_btn: "Import Users"
       show: "Show"

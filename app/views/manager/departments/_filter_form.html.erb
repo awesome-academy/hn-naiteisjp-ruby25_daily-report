@@ -1,10 +1,10 @@
 <div class="row mb-6 align-items-end">
-  <%= form_with url: manager_department_path(current_user.department), method: :get, local: true do |f| %>
+  <%= search_form_for @q, url: manager_department_path(current_user.department), method: :get, local: true do |f| %>
     <div class="col-md-4">
-      <%= f.text_field :email, value: params[:email], placeholder: t("users.index.search_placeholder"), class: "form-control" %>
+      <%= f.text_field :email_cont, placeholder: t("users.index.search_placeholder"), class: "form-control" %>
     </div>
     <div class="col-md-4">
-      <%= f.select :active_status, active_status_options(params[:active_status]), {}, {class: "form-control"} %>
+      <%= f.select :active_eq, active_status_options(params[:active_eq]), {}, {class: "form-control"} %>
     </div>
     <div class="col-md-4">
       <%= f.submit t("users.index.search_btn"), class: "btn btn-primary" %>

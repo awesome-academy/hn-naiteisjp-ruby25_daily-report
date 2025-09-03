@@ -5,6 +5,8 @@ en:
     name: "Name"
     email: "Email"
     role: "Role"
+    phone: "Phone"
+    address: "Address"
     admin:
       system_info: "System Information"
       departments: "Departments"

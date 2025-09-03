@@ -1,169 +1,131 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  let(:user) { User.new(valid_attributes) }
+  subject(:user) { build(:user) }
 
-  let!(:department) do
-    Department.create!(
-      name: "Phòng Nhân sự",
-      description: "Quản lý nhân sự"
-    )
+  describe "Associations" do
+    it { is_expected.to belong_to(:department).optional }
+    it { is_expected.to have_many(:sent_reports).class_name("DailyReport").with_foreign_key(:owner_id).dependent(:destroy) }
+    it { is_expected.to have_many(:received_reports).class_name("DailyReport").with_foreign_key(:receiver_id).dependent(:nullify) }
+    it { is_expected.to have_one_attached(:avatar) }
   end
 
-  let(:valid_attributes) do
-    {
-      name: "Alice",
-      email: "alice@example.com",
-      role: :user,
-      password: "123456",
-      department: department,
-      active: true
-    }
-  end
-
-  before do
-    department.reload
-  end
-
-  describe "associations" do
-    it "belongs to department (optional)" do
-      association = User.reflect_on_association(:department)
-      expect(association.macro).to eq(:belongs_to)
-      expect(association.options[:optional]).to be true
+  describe "Validations" do
+    context "when validating name" do
+      it { is_expected.to validate_presence_of(:name) }
+      it { is_expected.to validate_length_of(:name).is_at_most(Settings.MAX_LENGTH_USERNAME) }
     end
 
-    it "has many sent_reports" do
-      association = User.reflect_on_association(:sent_reports)
-      expect(association.macro).to eq(:has_many)
-      expect(association.options[:class_name]).to eq("DailyReport")
-      expect(association.options[:foreign_key]).to eq(:owner_id)
+    context "when validating email" do
+      it { is_expected.to validate_presence_of(:email) }
+      it { is_expected.to validate_length_of(:email).is_at_most(Settings.MAX_LENGTH_EMAIL) }
+    end
+    context "when a user already exists to test uniqueness" do
+      it { create(:user); is_expected.to validate_uniqueness_of(:email).case_insensitive.with_message(I18n.t("users.errors.email_already_exists")) }
+      it { is_expected.to allow_value("user@example.com").for(:email) }
+      it { is_expected.not_to allow_value("userexample.com").for(:email).with_message("is invalid") }
     end
 
-    it "has many received_reports" do
-      association = User.reflect_on_association(:received_reports)
-      expect(association.macro).to eq(:has_many)
-      expect(association.options[:foreign_key]).to eq(:receiver_id)
-    end
-  end
+    context "when validating avatar" do
+      it "is valid with a jpeg" do
+        user.avatar.attach(io: File.open(Rails.root.join("spec/fixtures/files/valid_image.jpeg")), filename: "test_image.jpg", content_type: "image/jpeg")
+        expect(user).to be_valid
+      end
 
-  describe "validations" do
-    it "is valid with valid attributes" do
-      expect(user).to be_valid
-      expect(user.save).to be true
-    end
-
-    it "is invalid without a name" do
-      user.name = nil
-      expect(user.save).to be false
-      expect(user.errors[:name]).to include("can't be blank")
+      it "is invalid with a pdf" do
+        user.avatar.attach(io: File.open(Rails.root.join("spec/fixtures/files/test_pdf.pdf")), filename: "test_pdf.pdf", content_type: "application/pdf")
+        expect(user).not_to be_valid
+        expect(user.errors[:avatar]).to include(I18n.t("users.profile.avatar_type_error"))
+      end
     end
 
-    it "is invalid if name is too long" do
-      user.name = "a" * (Settings.MAX_LENGTH_USERNAME + 1)
-      expect(user.save).to be false
-      expect(user.errors[:name]).to include("is too long (maximum is #{Settings.MAX_LENGTH_USERNAME} characters)")
-    end
+    context "custom validation 'one_manager_per_department'" do
+      let(:department) { create(:department) }
+      let!(:existing_manager) { create(:user, :manager, department: department) }
 
-    it "is invalid without an email" do
-      user.email = nil
-      expect(user.save).to be false
-      expect(user.errors[:email]).to include("can't be blank")
-    end
+      it "does not allow creating a new manager for that department" do
+        new_manager = build(:user, :manager, department: department)
+        expect(new_manager).not_to be_valid
+        expect(new_manager.errors[:role]).to include(I18n.t("users.errors.one_manager_per_department"))
+      end
 
-    it "is invalid with wrong email format" do
-      user.email = "invalid-email"
-      expect(user.save).to be false
-      expect(user.errors[:email]).to include("is invalid")
-    end
-
-    it "is invalid if email is not unique" do
-      User.create!(valid_attributes)
-      dup_user = User.new(valid_attributes.merge(name: "Another"))
-      expect(dup_user.save).to be false
-      expect(dup_user.errors[:email]).to include(I18n.t("users.errors.email_already_exists"))
+      it "allows updating the current manager" do
+        existing_manager.name = "New Name"
+        expect(existing_manager).to be_valid
+      end
     end
   end
 
-  describe "delegations" do
-    it "delegates department_name to department" do
-      expect(user.department_name).to eq(department.name)
+  describe "Enums" do
+    it { is_expected.to define_enum_for(:role).with_values(Settings.user_role.to_h) }
+  end
+
+  describe "Delegations" do
+    it { is_expected.to delegate_method(:name).to(:department).with_prefix(true) }
+    it { is_expected.to delegate_method(:manager).to(:department).allow_nil }
+    it { is_expected.to delegate_method(:name).to(:manager).with_prefix(true).allow_nil }
+  end
+
+  describe "Scopes" do
+    let!(:department) { create(:department, :without_manager) }
+    let!(:admin) { create(:user, :admin, active: true) }
+    let!(:manager) { create(:user, :manager, department: department, active: true) }
+    let!(:active_user) { create(:user, department: department, active: true) }
+    let!(:inactive_user) { create(:user, department: department, active: false) }
+    let!(:unassigned_user) { create(:user, department: nil, role: :user) }
+
+    it ".not_admin returns all non-admin users" do
+      expect(User.not_admin).to match_array([manager, active_user, inactive_user, unassigned_user])
     end
 
-    it "delegates manager to department" do
-      manager = User.create!(valid_attributes.merge(name: "Manager", role: :manager))
-      department.update!(manager: manager)
-      expect(user.manager).to eq(manager)
+    it ".not_manager returns all non-manager users" do
+      expect(User.not_manager).to match_array([admin, active_user, inactive_user, unassigned_user])
     end
 
-    it "delegates manager_name to manager" do
-      manager = User.create!(valid_attributes.merge(name: "Manager", role: :manager))
-      department.update!(manager: manager)
-      expect(user.manager_name).to eq("Manager")
+    it ".active returns all active users" do
+      expect(User.active).to match_array([admin, manager, active_user])
+    end
+
+    it ".inactive returns all inactive users" do
+      expect(User.inactive).to contain_exactly(inactive_user, unassigned_user)
+    end
+
+    it ".managed_by(manager) returns users managed by the manager" do
+      expect(User.managed_by(manager)).to contain_exactly(active_user, inactive_user)
+    end
+
+    it ".unassigned_users returns users without a department" do
+      expect(User.unassigned_users).to contain_exactly(unassigned_user)
+    end
+
+    it ".get_staff_members(manager) returns staff members in the department (excluding the manager)" do
+      expect(User.get_staff_members(manager)).to match_array([active_user, inactive_user])
     end
   end
 
-  describe "scopes" do
-    let!(:admin)   { User.create!(valid_attributes.merge(email: "admin@example.com", role: :admin)) }
-    let!(:manager) { User.create!(valid_attributes.merge(email: "manager@example.com", role: :manager)) }
-    let!(:staff)   { User.create!(valid_attributes.merge(email: "staff@example.com", role: :user, active: true)) }
-    let!(:inactive){ User.create!(valid_attributes.merge(email: "inactive@example.com", role: :user, active: false)) }
+  describe "Instance Methods" do
+    context "#active_for_authentication?" do
+      it "returns true if the user is active" do
+        user = build(:user, active: true)
+        expect(user.active_for_authentication?).to be true
+      end
 
-    it ".not_admin excludes admins" do
-      expect(User.not_admin).not_to include(admin)
-      expect(User.not_admin).to include(manager, staff, inactive)
+      it "returns false if the user is inactive" do
+        user = build(:user, active: false)
+        expect(user.active_for_authentication?).to be false
+      end
     end
 
-    it ".not_manager excludes managers" do
-      expect(User.not_manager).not_to include(manager)
-    end
+    context "#inactive_message" do
+      it "returns :inactive_account if the user is inactive" do
+        user = build(:user, active: false)
+        expect(user.inactive_message).to eq(:inactive_account)
+      end
 
-    it ".active returns active users" do
-      expect(User.active).to include(staff)
-      expect(User.active).not_to include(inactive)
-    end
-
-    it ".inactive returns inactive users" do
-      expect(User.inactive).to include(inactive)
-    end
-
-    it ".filter_by_active_status returns correct results" do
-      expect(User.filter_by_active_status("active")).to include(staff)
-      expect(User.filter_by_active_status("inactive")).to include(inactive)
-      expect(User.filter_by_active_status("all")).to include(admin, manager, staff, inactive)
-    end
-
-    it ".filter_by_role filters by role" do
-      expect(User.filter_by_role("manager")).to include(manager)
-      expect(User.filter_by_role("manager")).not_to include(staff)
-    end
-
-    it ".filter_by_department filters by department_id" do
-      dept2 = Department.create!(name: "Dept2", description: "This is description ......")
-      u2 = User.create!(valid_attributes.merge(email: "u2@example.com", department: dept2))
-      expect(User.filter_by_department(dept2.id)).to include(u2)
-      expect(User.filter_by_department(dept2.id)).not_to include(staff)
-    end
-
-    it ".filter_by_email filters by email substring" do
-      expect(User.filter_by_email("staff")).to include(staff)
-      expect(User.filter_by_email("zzz")).to be_empty
-    end
-  end
-
-  describe "custom validation: one_manager_per_department" do
-    let!(:dept) { Department.create!(name: "Phòng IT", description: "Liên quan đến các vấn đề về CNTT") }
-
-    it "allows only one manager per department" do
-      User.create!(valid_attributes.merge(email: "m1@example.com", role: :manager, department: dept))
-      another_manager = User.new(valid_attributes.merge(email: "m2@example.com", role: :manager, department: dept))
-
-      expect(another_manager.save).to be false
-      expect(another_manager.errors[:role]).to include(I18n.t("users.errors.one_manager_per_department"))
-    end
-
-    it "allows a manager if none exists in department" do
-      manager = User.new(valid_attributes.merge(email: "m3@example.com", role: :manager, department: dept))
-      expect(manager.save).to be true
+      it "returns Devise's default message if the user is active" do
+        user = build(:user, active: true)
+        expect(user.inactive_message).to eq(:inactive)
+      end
     end
   end
 end

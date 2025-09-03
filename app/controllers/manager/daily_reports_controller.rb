@@ -1,11 +1,13 @@
 class Manager::DailyReportsController < ApplicationController
   load_and_authorize_resource class: DailyReport.name
   before_action :manager_user
-  before_action :set_staff_members, :filter_daily_reports, only: :index
+  before_action :set_staff_members, only: :index
 
   def index
+    @q = DailyReport.by_owner_id(@staff_members.pluck(:id))
+                    .ransack params[:q]
     @pagy, @daily_reports = pagy(
-      @daily_reports.includes(:owner).order_created_at_desc,
+      @q.result.includes(:owner).order_created_at_desc,
       items: Settings.ITEMS_PER_PAGE_10
     )
   end
@@ -35,14 +37,7 @@ class Manager::DailyReportsController < ApplicationController
   end
 
   def set_staff_members
-    @staff_members = User.get_staff_members(current_user)
-  end
-
-  def filter_daily_reports
-    @daily_reports = DailyReport.by_owner_id(@staff_members.pluck(:id))
-                                .filter_by_status(params[:status])
-                                .filter_by_report_date(params[:report_date])
-                                .filter_by_owner params[:user_id]
+    @staff_members = User.get_staff_members current_user
   end
 
   def update_status new_notes, old_notes

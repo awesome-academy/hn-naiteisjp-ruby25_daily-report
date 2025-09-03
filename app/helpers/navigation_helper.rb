@@ -7,7 +7,7 @@ module NavigationHelper
   private
 
   def nav_items
-    raw_nav_item_data.map do |item|
+    raw_nav_item_data.compact.map do |item|
       build_nav_item(item[:label], item[:path], item[:icon], item[:roles])
     end
   end
@@ -57,16 +57,14 @@ module NavigationHelper
         icon: "home",
         roles: %w(admin)
       },
-      {
-        label: "my_department",
-        path: (
-          if current_user&.department
-            manager_department_path(current_user.department)
-          end
-        ),
-        icon: "home",
-        roles: %w(manager)
-      },
+      if current_user.department.present?
+        {
+          label: "my_department",
+          path: manager_department_path(current_user.department),
+          icon: "home",
+          roles: %w(manager)
+        }
+      end,
       {
         label: "users",
         path: admin_users_path,

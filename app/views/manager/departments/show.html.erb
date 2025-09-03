@@ -1,18 +1,34 @@
 <h2 class="text-center"><%= t "departments.show.title" %></h2>
 
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title"><%= @department.name %></h5>
-    <p class="card-text"><strong><%= t "departments.show.active_users_count" %>:</strong> <%= @active_users_count %></p>
-    <p class="card-text"><strong><%= t "departments.show.description" %>:</strong> <%= @department.description.presence || t("departments.show.no_description") %></p>
-    <p class="card-text"><strong><%= t "departments.show.created_at" %>:</strong> <%= l(@department.created_at, format: :long) %></p>
-    <p class="card-text"><strong><%= t "departments.show.updated_at" %>:</strong> <%= l(@department.updated_at, format: :long) %></p>
+<% if @department.present? %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title"><%= @department.name %></h5>
+      <p class="card-text">
+        <strong><%= t "departments.show.active_users_count" %>:</strong>
+        <%= @active_users_count %>
+      </p>
+      <p class="card-text">
+        <strong><%= t "departments.show.description" %>:</strong>
+        <%= @department.description.presence || t("departments.show.no_description") %>
+      </p>
+      <p class="card-text">
+        <strong><%= t "departments.show.created_at" %>:</strong>
+        <%= l(@department.created_at, format: :long) %>
+      </p>
+      <p class="card-text">
+        <strong><%= t "departments.show.updated_at" %>:</strong>
+        <%= l(@department.updated_at, format: :long) %>
+      </p>
+    </div>
   </div>
-</div>
 
-<br>
-
-<h2 class="text-center"><%= t("users.index.title") %></h2>
-<%= render "add_new_member_btn" %>
-<%= render "filter_form" %>
-<%= render "table_content_users" %>
+  <h2 class="text-center"><%= t("users.index.title") %></h2>
+  <%= render "add_new_member_btn" %>
+  <%= render "filter_form" %>
+  <%= render "table_content_users" %>
+<% else %>
+  <div class="alert alert-warning text-center">
+    <%= t "departments.show.no_department_assigned" %>
+  </div>
+<% end %>

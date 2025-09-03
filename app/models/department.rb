@@ -13,6 +13,10 @@ class Department < ApplicationRecord
 
   DEPARTMENT_PARAMS = %w(name description deleted_at).freeze
 
+  def self.ransackable_attributes _auth_object = nil
+    %w(name deleted_at)
+  end
+
   scope :order_by_latest, ->{order(deleted_at: :asc, created_at: :desc)}
   scope :order_by_name, ->{order(name: :desc)}
   scope :search_by_name, lambda {|query|

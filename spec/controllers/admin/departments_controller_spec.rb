@@ -28,8 +28,8 @@ RSpec.describe Admin::DepartmentsController, type: :controller do
     end
     context "when no departments found" do
       it "sets flash warning" do
-        get :index, params: { query: "not_exist" }
-        expect(flash[:warning]).to eq I18n.t("departments.index.table.no_result")
+        get :index, params: { q: { name_cont: "not_exist" } }
+        expect(flash[:info]).to eq I18n.t("departments.index.table.no_result")
       end
     end
   end
@@ -99,19 +99,42 @@ RSpec.describe Admin::DepartmentsController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    context "when not deleted" do
-      it "destroys and redirects" do
-        delete :destroy, params: { id: department.id }
-        expect(flash[:success]).to be_present
-        expect(response).to redirect_to(admin_departments_path)
-      end
-    end
+    context "when the department is active" do
+      context "and deletion is successful" do
+        before do
+          delete :destroy, params: { id: department.to_param, locale: :en }
+        end
 
-    context "when already deleted" do
-      it "does not destroy and redirects with danger" do
-        delete :destroy, params: { id: deleted_department.id }
-        expect(flash[:danger]).to be_present
-        expect(response).to redirect_to(admin_departments_path)
+        it "soft-deletes the department" do
+          expect(department.reload.deleted?).to be true
+        end
+
+        it "displays a success message" do
+          expect(flash[:success]).to be_present
+        end
+
+        it "redirects to the department list page" do
+          expect(response).to redirect_to(admin_departments_path)
+        end
+      end
+
+      context "but deletion fails (e.g., due to before_destroy callback)" do
+        before do
+          allow_any_instance_of(Department).to receive(:destroy).and_return(false)
+          delete :destroy, params: { id: department.to_param, locale: :en }
+        end
+
+        it "does not delete the department" do
+          expect(department.reload.deleted?).to be false
+        end
+
+        it "displays a failure message" do
+          expect(flash[:danger]).to be_present
+        end
+
+        it "redirects to the department list page" do
+          expect(response).to redirect_to(admin_departments_path)
+        end
       end
     end
   end

@@ -6,6 +6,8 @@ vi:
     name: "Tên"
     email: "Email"
     role: "Vai trò"
+    phone: "Số điện thoại"
+    address: "Địa chỉ"
     admin:
       departments: "Số bộ phận"
       managers: "Số quản lý"

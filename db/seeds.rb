@@ -29,3 +29,39 @@ User.create!(
     department: departments.first
   )
 end
+
+manager = User.create!(
+  name: "Ha Hong Son",
+  email: "ha.hong.son@sun-asterisk.com",
+  role: :manager,
+  password: "123456",
+  active: true
+)
+
+# Daily reports
+employee1 = User.second
+employee1.update active: true
+
+report_dates = 10.days.ago.to_date.upto(Date.today).to_a.sample(10)
+
+report_dates.each_with_index do |date, i|
+  owner = employee1
+  manager = manager
+
+  next if DailyReport.exists?(owner: owner, report_date: date)
+
+  DailyReport.create!(
+    owner: owner,
+    receiver: manager,
+    report_date: date,
+    status: DailyReport.statuses.keys.sample,
+    planned_tasks: "Plan for day #{i + 1} ----------------------------------------------------",
+    actual_tasks: "Did tasks #{i + 1} ----------------------------------------------------",
+    incomplete_reason: i.even? ? "Blocked by issue" : nil,
+    next_day_planned_tasks: "Next plan #{i + 2}----------------------------------------------------",
+    manager_notes: i.odd? ? "Looks good." : nil,
+    reviewed_at: Time.current - rand(1..5).days
+  )
+end
+
+puts "✅ Seeded sample users and daily reports!"

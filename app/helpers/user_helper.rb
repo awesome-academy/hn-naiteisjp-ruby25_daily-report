@@ -2,7 +2,15 @@ module UserHelper
   def role_options_for_select
     options_for_select(
       Settings.FILTER_ROLE.map do |role|
-        [I18n.t("users.roles.#{role}"), role.to_sym]
+        [I18n.t("users.roles.#{role}"), User.roles[role]]
+      end
+    )
+  end
+
+  def active_options_for_select
+    options_for_select(
+      Settings.active_status.map do |status|
+        [I18n.t("users.index.filter.#{status}"), status == "active"]
       end
     )
   end
