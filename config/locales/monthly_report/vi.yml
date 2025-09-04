@@ -1,0 +1,20 @@
+vi:
+  monthly_report:
+    subject: "Báo cáo thống kê hàng tháng cho %{report_month} của phòng ban %{department_name}"
+    title: "Báo cáo thống kê tháng %{report_month}"
+    detail_stat: "THỐNG KÊ CHI TIẾT"
+    department: "Phòng ban: %{department_name}"
+    greeting: "Chào Anh/Chị %{manager_name},"
+    introduction: "Dưới đây là bảng thống kê hiệu suất báo cáo công việc của các thành viên trong phòng ban của Anh/Chị trong tháng vừa qua."
+    table_headers:
+      staff_name: "Tên Nhân Viên"
+      total_reports: "Tổng Báo Cáo"
+      pending: "Đang Chờ"
+      read: "Đã Đọc"
+      commented: "Đã Phản Hồi"
+    access_details: "👉 Vui lòng truy cập %{link} để xem chi tiết."
+    management_page: "trang quản lý"
+    sincerely: "Trân trọng."
+  time:
+    formats:
+      month_year: "%B %Y"

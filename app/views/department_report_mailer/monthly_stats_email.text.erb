@@ -1,0 +1,20 @@
+<%= t("monthly_report.title", report_month: @report_month) %>
+<%= t("monthly_report.department", department_name: @department.name) %>
+
+<%= t("monthly_report.greeting", manager_name: @manager.name) %>,
+
+<%= t("monthly_report.introduction") %>
+
+<%= t("monthly_report.detail_stat") %>
+
+<% @stats.each do |staff, data| %>
+<%= t("monthly_report.table_headers.staff_name") %>: <%= staff.name %>
+  - <%= t("monthly_report.table_headers.total_reports") %>: <%= data[:total] %>
+  - <%= t("monthly_report.table_headers.pending") %>: <%= data["pending"] %>
+  - <%= t("monthly_report.table_headers.read") %>: <%= data["read"] %>
+  - <%= t("monthly_report.table_headers.commented") %>: <%= data["commented"] %>
+<% end %>
+
+<%= t("monthly_report.access_details", link: manager_daily_reports_url) %>
+
+<%= t("monthly_report.sincerely") %>.

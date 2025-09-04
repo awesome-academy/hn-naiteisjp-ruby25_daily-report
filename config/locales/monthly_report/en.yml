@@ -1,0 +1,20 @@
+en:
+  monthly_report:
+    subject: "Monthly statistics report for %{report_month} for department %{department_name}"
+    title: "Monthly statistics report %{report_month}"
+    detail_stat: "DETAIL STATISTICS DAILY REPORT"
+    department: "Department: %{department_name}"
+    greeting: "Dear %{manager_name},"
+    introduction: "Below is a table summarizing the work report performance of the members in your department for the past month."
+    table_headers:
+      staff_name: "Staff Name"
+      total_reports: "Total Reports"
+      pending: "Pending"
+      read: "Read"
+      commented: "Commented"
+    access_details: "Please visit the %{link} to view details."
+    management_page: "management page"
+    sincerely: "Sincerely."
+  time:
+    formats:
+      month_year: "%B %Y"
