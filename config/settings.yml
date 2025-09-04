@@ -44,3 +44,6 @@ be_one: "0"
 be_zero: "1"
 
 CONTENT_DISPOSITION_FORMAT: "attachment; filename=\"%{filename}\""
+
+JOB_RETRY_TIMES: 3
+LAST_MONTH: <%= 1.month.ago %>

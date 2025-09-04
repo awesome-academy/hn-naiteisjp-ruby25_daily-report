@@ -1,0 +1,41 @@
+<div class="container my-4">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="mb-3 text-primary"><%= t("monthly_report.title", report_month: @report_month) %></h2>
+      <h4 class="mb-4"><%= t("monthly_report.department", department_name: @department.name) %></h4>
+
+      <p><%= t("monthly_report.greeting", manager_name: @manager.name) %></p>
+      <p>
+        <%= t("monthly_report.introduction") %>
+      </p>
+
+      <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-light">
+          <tr>
+            <th><%= t("monthly_report.table_headers.staff_name") %></th>
+            <th><%= t("monthly_report.table_headers.total_reports") %></th>
+            <th><%= t("monthly_report.table_headers.pending") %></th>
+            <th><%= t("monthly_report.table_headers.read") %></th>
+            <th><%= t("monthly_report.table_headers.commented") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @stats.each do |staff, data| %>
+            <tr>
+              <td class="fw-bold text-start"><%= staff.name %></td>
+              <td><%= data[:total] %></td>
+              <td><%= data["pending"] %></td>
+              <td><%= data["read"] %></td>
+              <td><%= data["commented"] %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <p class="mt-4">
+        <%= t("monthly_report.access_details", link: link_to(t("monthly_report.management_page"), manager_daily_reports_url, class: 'fw-bold')).html_safe %>
+      </p>
+      <p class="mb-0"><%= t("monthly_report.sincerely") %></p>
+    </div>
+  </div>
+</div>
